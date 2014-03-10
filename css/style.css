@@ -2,7 +2,7 @@ body {
     padding-top: 30px;
 }
 .starter-template {
-    padding: 20px 0px 0px 3px;
+    padding: 20px 0px 0px 0px;
 }
 .container {
     margin-right: 0px !important; 
@@ -28,12 +28,12 @@ body {
 #numRows {
     font-size: 14px;
 }
-thead th, thead td {
-    background-color: #EEE;
+thead th {
+    background-color: #CCC;
     padding-left: 5px !important;
 }
-
 thead td {
+    background-color: #EEE;
     padding: 0px !important;
 }
 tbody td, tbody th {

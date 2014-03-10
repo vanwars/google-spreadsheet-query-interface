@@ -1,45 +1,35 @@
 var colWidth = 150;
+var spreadsheetKey = '0AmrOktWHu7PWdGJaMTN5QkF5UTJTZFExamVmWXVQM2c';
+
 function init(){
     var me = this;
-    drawVisualization({
-        tq: $('#sql').val()   
-    });
+    
     $('#send').click(function(){
-        me.drawVisualization({
+        me.querySpreadsheet({
             tq: $('#sql').val()   
         });   
     });
     
-    
     $.extend($.tablesorter.themes.bootstrap, {
-        // these classes are added to the table. To see other table classes available,
-        // look here: http://twitter.github.com/bootstrap/base-css.html#tables
-        table      : 'table table-bordered',
-        caption    : 'caption',
-        header     : 'bootstrap-header', // give the header a gradient background
-        footerRow  : '',
-        footerCells: '',
-        icons      : '', // add "icon-white" to make them white; this icon class is added to the <i> in the header
         sortNone   : 'fa fa-sort',
         sortAsc    : 'fa fa-sort-alpha-asc',     // includes classes for Bootstrap v2 & v3
         sortDesc   : 'fa fa-sort-alpha-desc', // includes classes for Bootstrap v2 & v3
-        active     : '', // applied when column is sorted
-        hover      : '', // use custom css here - bootstrap class may not override it
-        filterRow  : '', // filter row class
-        even       : '', // odd row zebra striping
-        odd        : ''  // even row zebra striping
     });
     
+    querySpreadsheet({
+        tq: $('#sql').val()   
+    });
 }
 
-function drawVisualization(opts) {
+function querySpreadsheet(opts) {
+    //https://developers.google.com/chart/interactive/docs/dev/implementing_data_source?csw=1#requestformat
     var params = {
-        key: '0AmrOktWHu7PWdGJaMTN5QkF5UTJTZFExamVmWXVQM2c',
+        key: spreadsheetKey,
         pub: 1,
-        tqx: 'responseHandler:renderTable'
+        tqx: 'responseHandler:renderTable',
+        tq: ''
     };
     $.extend(params, opts);
-    //alert(JSON.stringify(params));
     $.ajax({
         url: "http://spreadsheets.google.com/tq",
         dataType: "jsonp",
@@ -53,6 +43,8 @@ function renderTable(response) {
         return;
     }
     //$('body').html(JSON.stringify(response.table));
+    
+    //build table from JSON response:
     $('#tableHolder').empty().append($('<table id="results" class="tablesorter-bootstrap"></table>'));
     $('#tableHolder').css({
         width: (response.table.cols.length*colWidth) + "px"    
@@ -78,22 +70,24 @@ function renderTable(response) {
         });  
     });
     
+    //make table sortable:
     $("table").tablesorter({
         theme : "bootstrap",
-
-        //widthFixed: true,
-    
         headerTemplate : '{content} {icon}', // new in v2.7. Needed to add the bootstrap icon!
         widgets : [ "uitheme", "filter"],
         widgetOptions : {
             filter_reset : ".reset"
         }
-    }).bind('filterEnd', function() {
-        $('#numRows').html('Displaying ' + ($('#results tr:visible').length-3) + ' Rows');
-    });;
+    }).bind('filterEnd', function() { displayRowLength(); });
     
+    //make columns adjustable:
     $("#results").colResizable({ disable: true }); //a hack to run garbage collection for resizable table
     $("#results").colResizable({ disable: false });
-    $('#numRows').html('Displaying ' + ($('#results tr:visible').length-3) + ' Rows');
     
+    displayRowLength();
+}
+
+function displayRowLength(){
+    //add row length message:
+    $('#numRows').html('Displaying ' + ($('#results tr:visible').length-3) + ' Rows'); 
 }
