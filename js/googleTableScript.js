@@ -1,13 +1,10 @@
 var colWidth = 150;
-var spreadsheetKey = '0AmrOktWHu7PWdGJaMTN5QkF5UTJTZFExamVmWXVQM2c';
 
 function init(){
-    var me = this;
-    
     $('#send').click(function(){
-        me.querySpreadsheet({
+        querySpreadsheet({
             tq: $('#sql').val()   
-        });   
+        }, 'renderTable');   
     });
     
     $.extend($.tablesorter.themes.bootstrap, {
@@ -18,24 +15,9 @@ function init(){
     
     querySpreadsheet({
         tq: $('#sql').val()   
-    });
+    }, 'renderTable');
 }
 
-function querySpreadsheet(opts) {
-    //https://developers.google.com/chart/interactive/docs/dev/implementing_data_source?csw=1#requestformat
-    var params = {
-        key: spreadsheetKey,
-        pub: 1,
-        tqx: 'responseHandler:renderTable',
-        tq: ''
-    };
-    $.extend(params, opts);
-    $.ajax({
-        url: "http://spreadsheets.google.com/tq",
-        dataType: "jsonp",
-        data: params
-    });
-}
 
 function renderTable(response) {
     if (response.status == 'error') {
@@ -55,7 +37,7 @@ function renderTable(response) {
     $('#results').append($head.append($tr1).append($tr2));
     $.each(response.table.cols, function(){
         $tr1.append($('<th></th>').html(this.id));  
-        $tr2.append($('<td class="sorter-false"></td>').html(this.label));  
+        $tr2.append($('<td class="sorter-false"></td>').html(this.label + '<br>[' + this.type.toUpperCase() + ']'));  
     })
 
     //populate data values:
