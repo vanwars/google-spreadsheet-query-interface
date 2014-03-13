@@ -9,23 +9,29 @@ List.prototype.renderFromResponse = function(opts) {
             this.c[0].v.toString(), this.c[1].v]
         );
     });
-    var chart = new Highcharts.Chart({
-        chart: {
-            renderTo: 'container',
-            type: 'pie'
-        },
-        title: {
-            text: title
-        },
-        credits: {
-            enabled: false
-        },
-        series: [
-            {
-                data: data
-            }
-        ]
     
-    });
+    var $table = $('<table></table>')
+                    .addClass("table table-striped table-bordered")
+                    .css({
+                        'margin-top': '20px'    
+                    });
+    var $head = $('<thead></thead>');
+    var $body = $('<tbody></tbody>');
+    $table.append($head).append($body);
+    $head.append(
+            $('<tr></tr>')
+                .append($('<th></th>').html(title))
+                .append($('<th>Count</th>'))
+    );
+    $.each(data, function(){
+        $tr = $('<tr></tr>');
+        $tr.append($('<td></td>').html(this[0]));  
+        $tr.append($('<th></th>').html(this[1]));  
+        $body.append($tr);  
+    })
+
+    $('#container').empty().append($table);
+    
+    
 }
 

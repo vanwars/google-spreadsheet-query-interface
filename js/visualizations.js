@@ -1,6 +1,8 @@
 var VisualizationPage = function(){
     this.barChart = new BarChart();  
-    this.pieChart = new PieChart();    
+    this.pieChart = new PieChart();  
+    this.list = new List();    
+    this.tagCloud = new TagCloud();    
 };
 
 VisualizationPage.prototype.init = function() {
@@ -71,8 +73,18 @@ VisualizationPage.prototype.renderVis = function(response) {
                 clear: clear
             });
             break;
-        case 'pie':
+        case 'pieChart':
             this.pieChart.renderFromResponse({
+                response: response
+            })
+            break;
+        case 'list':
+            this.list.renderFromResponse({
+                response: response
+            })
+            break;
+        case 'tagCloud':
+            this.tagCloud.renderFromResponse({
                 response: response
             })
             break;

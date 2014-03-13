@@ -26,6 +26,14 @@
 	      stroke: #000;
 	      shape-rendering: crispEdges;
 	    }
+	    
+	    #container {
+		margin-top:20px;
+		min-width:600px;
+		max-width:800px;
+		min-height:400px;
+		max-height:500px;
+	    }
 
 	</style>
         <link href="css/bootstrap.css" rel="stylesheet" />
@@ -41,6 +49,12 @@
 	<script type="text/javascript" src="js/visualizations.js"></script>
 	<script type="text/javascript" src="js/charts/barChart.js"></script>
 	<script type="text/javascript" src="js/charts/pieChart.js"></script>
+	<script type="text/javascript" src="js/charts/list.js"></script>
+	
+	<script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+	<script type="text/javascript" src="https://jardindesconnaissances.googlecode.com/svn-history/r82/trunk/public/js/d3.layout.cloud.js"></script>
+	<script type="text/javascript" src="js/charts/tagCloud.js"></script>
+	
 	<script>
 	    var visPage = new VisualizationPage(); 
 	</script>
@@ -78,9 +92,11 @@
 		<div class="col-md-8"  style="position:fixed;left:400px;top:70px">
 		    <select id="chartType">
 			<option value="barChart">Bar Chart</option>
-			<option value="pie">Pie Chart</option>
+			<option value="pieChart">Pie Chart</option>
+			<option value="list">List</option>
+			<option value="tagCloud">Tag Cloud</option>
 		    </select>
-		    <div style="width:600px;height:400px;" id="container"></div>
+		    <div id="container"></div>
 		</div>
 	    </div>
 
