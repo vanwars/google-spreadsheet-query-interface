@@ -8,7 +8,7 @@ TagCloud.prototype.renderFromResponse = function(opts) {
     $.each(response.table.rows, function(){
         var line = this.c[0].v.toString().removeStopWords();
         var lineCount = this.c[1].v;
-        $.each(line.split(/[\s|,|.|"]+/), function(){
+        $.each(line.split(/[\s|,|.|!"]+/), function(){
             if(words[this.toLowerCase()] != null)
                 words[this.toLowerCase()] += lineCount;
             else
