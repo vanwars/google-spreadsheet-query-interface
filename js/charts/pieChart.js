@@ -1,31 +1,29 @@
-var PieChart = function(){ };
+var PieChart = function(){
+    this.type = 'pieChart';
+    this.title = null;
+    this.data = [];
+    this.callback = 'visPage.pieChart.processResponse';
+};
 
-PieChart.prototype.renderFromResponse = function(opts) {
-    var response = opts.response;
-    var title = response.table.cols[0].label;
-    var data = [];
-    $.each(response.table.rows, function(){
-        data.push([
-            this.c[0].v.toString(), this.c[1].v]
-        );
-    });
+PieChart.prototype = new Chart();
+
+PieChart.prototype.renderChart = function() {
     var chart = new Highcharts.Chart({
         chart: {
             renderTo: 'container',
             type: 'pie'
         },
         title: {
-            text: title
+            text: this.title
         },
         credits: {
             enabled: false
         },
         series: [
             {
-                data: data
+                data: this.data
             }
         ]
-    
     });
 }
 

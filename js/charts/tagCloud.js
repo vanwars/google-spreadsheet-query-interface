@@ -1,42 +1,49 @@
 var fill = d3.scale.category20();
-var TagCloud = function(){};
+var TagCloud = function(){
+    this.type = 'tagCloud';
+    this.title = null;
+    this.words = [];
+    this.callback = 'visPage.tagCloud.processResponse';
+};
 
-TagCloud.prototype.renderFromResponse = function(opts) {
-    var response = opts.response;
-    var words = {};
+TagCloud.prototype = new Chart();
+
+TagCloud.prototype.processResponse = function(response) {
+    var me = this;
+    this.words = {};
     var maxCount = 0;
     $.each(response.table.rows, function(){
         var line = this.c[0].v.toString().removeStopWords();
         var lineCount = this.c[1].v;
         $.each(line.split(/[\s|,|.|!"]+/), function(){
-            if(words[this.toLowerCase()] != null)
-                words[this.toLowerCase()] += lineCount;
+            if(me.words[this.toLowerCase()] != null)
+                me.words[this.toLowerCase()] += lineCount;
             else
-                words[this.toLowerCase()] = lineCount;   
+                me.words[this.toLowerCase()] = lineCount;   
 
             //keep track of most popular word
-            if (maxCount < words[this.toLowerCase()])
-                maxCount = words[this.toLowerCase()]
+            if (maxCount < me.words[this.toLowerCase()])
+                maxCount = me.words[this.toLowerCase()]
         }) 
     });
     var wordMap = [];
-    var len = Object.keys(words).length;
+    var len = Object.keys(this.words).length;
     var minFont = 20, maxFont = 80;
-    for(k in words) {
-        wordMap.push({text: k, size: (words[k] / maxCount) * (maxFont - minFont) + minFont})            
+    for(k in this.words) {
+        wordMap.push({text: k, size: (this.words[k] / maxCount) * (maxFont - minFont) + minFont})            
     }
     var me = this;
     d3.layout.cloud().size([$('#container').width(), $('#container').height()])
-    .words(wordMap)
-    .rotate(function() { return ~~(Math.random() * 2) * 90; })
-    .font("Impact")
-    .fontSize(function(d) { return d.size; })
-    .on("end", me.draw)
-    .start();
+        .words(wordMap)
+        .rotate(function() { return ~~(Math.random() * 2) * 90; })
+        .font("Impact")
+        .fontSize(function(d) { return d.size; })
+        .on("end", me.renderChart)
+        .start();
 };
 
-TagCloud.prototype.draw = function(words) {
-    var me = this;
+TagCloud.prototype.renderChart = function(words) {
+    //alert(JSON.stringify(words));
     $('#container').empty();
     d3.select("#container").append("svg")
         .attr("width", $('#container').width())
@@ -498,7 +505,7 @@ String.prototype.removeStopWords = function() {
     )
          
     // Split out all the individual words in the phrase
-    words = cleansed_string.match(/[^\s]+|\s+[^\s+]$/g)
+    var words = cleansed_string.match(/[^\s]+|\s+[^\s+]$/g)
  
     // Review all the words
     for(x=0; x < words.length; x++) {

@@ -1,69 +1,32 @@
 var VisualizationPage = function(){
+    this.charts = {};
     this.barChart = new BarChart();  
     this.pieChart = new PieChart();  
     this.list = new List();    
-    this.tagCloud = new TagCloud();    
+    this.tagCloud = new TagCloud();  
+    this.scatterPlot = new ScatterPlot();
+    this.dataManager = new DataManager();
+    this.makeLookup();
 };
 
 VisualizationPage.prototype.init = function() {
-    querySpreadsheet({}, 'visPage.renderMenu');
+    //querySpreadsheet({}, 'visPage.renderMenu');
+    this.dataManager.init();
 };
 
-VisualizationPage.prototype.doQuery = function(val, dataType) {
-    var dummyCol = (val == 'A') ? 'B' : 'A';
-    var sql = "SELECT " + val + ", count(" + dummyCol + ") ";
-    if (dataType == 'string')
-        sql += " WHERE " + val + " <> ''";
-    else
-        sql += " WHERE " + val + " is not null";  
-    sql += " GROUP BY " + val;
-    if (dataType == 'date') {
-        sql += " ORDER BY " + val;
-    }
-    //alert(sql);
-    querySpreadsheet({
-        tq: sql,   
-    }, 'visPage.renderVis');
+VisualizationPage.prototype.makeLookup = function() {
+    this.charts[this.barChart.type] = this.barChart;
+    this.charts[this.pieChart.type] = this.pieChart;
+    this.charts[this.list.type] = this.list;
+    this.charts[this.tagCloud.type] = this.tagCloud;
+    this.charts[this.scatterPlot.type] = this.scatterPlot;
 };
 
-VisualizationPage.prototype.renderMenu = function(response) {
-    var me = this;
-    $('#chartType').change(function(){
-        var $elem = $('#menu').find('a.active');
-        if($elem.get(0) != null)
-            me.doQuery($elem.find('h4').html(), $elem.find('input').val().toLowerCase());   
-    });
-    
-    $.each(response.table.cols, function(){
-        if (this.label) {
-            var $a = $('<a href="#" class="list-group-item"></a>');
-            $a.append (
-                $('<h4 class="list-group-item-heading"></h4>')
-                    .html(this.id)
-            ).append(
-                $('<span class="badge"></span>').html(this.type)
-            ).append(
-                $('<p class="list-group-item-text"></p>').html(this.label)
-            ).append(
-                $('<input type="hidden" />').val(this.type)
-            ).click(function(e){
-                if ((e.ctrlKey || e.metaKey) && $('#chartType').val() == 'barChart') {
-                    //do nothing
-                }
-                else {
-                    $('#menu').find('a').removeClass("active");
-                }
-                $(this).addClass("active");
-                me.doQuery($(this).find('h4').html(), $(this).find('input').val().toLowerCase());
-                return false;
-            });
-        
-            $('#menu').append($a);
-        }
-    });
-};
+VisualizationPage.prototype.getActiveChart = function(){
+    return this.charts[$('#chartType').val()];
+}
 
-VisualizationPage.prototype.renderVis = function(response) {
+VisualizationPage.prototype.deprecated = function(){
     switch($('#chartType').val()){
         case 'barChart':
             //if more than one item is selected, then the chart type is additive
@@ -88,5 +51,15 @@ VisualizationPage.prototype.renderVis = function(response) {
                 response: response
             })
             break;
+        case 'scatter':
+            this.scatterPlot.renderFromResponse({
+                response: response
+            })
+            break;
     }
-};
+}
+
+
+
+
+

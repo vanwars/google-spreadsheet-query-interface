@@ -1,49 +1,135 @@
 var BarChart = function(){
-    this.numSeries = 1;
-    this.data = {};
-    this.titles = [];
+    this.type = 'barChart';
+    this.activeEntryID = -1;
+    this.entries = {};
+    this.callback = 'visPage.barChart.processResponse';
 };
 
-BarChart.prototype.renderFromResponse = function(opts) {
-    var me = this;
-    var response = opts.response;
-    if (opts.clear) {
-        this.numSeries = 1;
-        this.data = {};
-        this.titles = [];
+BarChart.prototype = new Chart();
+
+BarChart.prototype.renderVis = function(e, column){
+    if (e.ctrlKey || e.metaKey) {
+        //if the control or option key are down:
+        if (!column.isActive())
+            column.htmlEntry.addClass("active");
+        else
+            column.htmlEntry.removeClass("active");
     }
     else {
-        ++this.numSeries;
+        //clear out data and start again:
+        this.entries = {};
+        $('#menu a').removeClass("active");
+        column.htmlEntry.addClass("active");
     }
-    this.titles.push(response.table.cols[0].label);
-    $.each(response.table.rows, function(){
-        if(me.data[this.c[0].v] == null)
-            me.data[this.c[0].v] = [this.c[1].v];
-        else
-            me.data[this.c[0].v].push(this.c[1].v);    
-    });
     
-    // if there are no data values for existing categories in the series,
-    // set those data values to 0.
-    for(k in this.data) {
-        while(this.data[k].length < this.numSeries) {
-            this.data[k].push(0);
+    if (column.isActive())
+        visPage.getActiveChart().addSeries(column);
+    else
+        visPage.getActiveChart().removeSeries(column);  
+};
+
+BarChart.prototype.addSeries = function(column) {
+    this.entries[column.id] = {
+        column: column,
+        data: null
+    };
+    this.activeEntryID = column.id;
+    this.querySpreadsheet(column.getSQL());
+};
+
+BarChart.prototype.removeSeries = function(column) {
+    this.entries[column.id] = null;
+    delete this.entries[column.id];
+    this.renderChart();
+};
+
+BarChart.prototype.getTitle = function(column) {
+    for(k in this.entries) {
+        return this.entries[k].column.name;
+    }
+    return ''
+};
+
+BarChart.prototype.processResponse = function(response) {
+    this.addEntry(response);
+    this.renderChart();
+};
+
+BarChart.prototype.addEntry = function(response) {
+    var data = {};
+    $.each(response.table.rows, function(){
+        data[this.c[0].v] = this.c[1].v;  
+    });
+    this.entries[this.activeEntryID].data = data;
+};
+
+BarChart.prototype.getTable = function(){
+    //convert the column entries into a flat data table:
+    var table = {
+        columns: [],
+        data: {}
+    };
+    
+    //populate the table dictionary with all of the keys and empty arrays:
+    for(k in this.entries) {
+        for(j in this.entries[k].data) {
+            table.data[j] = [];
         }
     }
     
+    //populate the table dictionary's values:
+    for(k in this.entries) {
+        table.columns.push(this.entries[k].column.name);
+        var data = this.entries[k].data;
+        for(j in table.data) {
+            if(data[j] != null)
+                table.data[j].push(data[j]);   
+            else
+                table.data[j].push(0);    
+        }
+    }
+    return table;
+};
+
+
+BarChart.prototype.getCategories = function() {
+    var keys = [];
+    for(k in this.getTable().data) {
+        keys.push(k);
+    }
+    return keys;
+};
+
+BarChart.prototype.getSeries = function() {
+    var table = this.getTable();
+    var series = [];
+    for(var i=0; i < Object.keys(this.entries).length; i++) {
+        var data = [];
+        for(k in table.data) {
+            data.push(table.data[k][i]);
+        }
+        series.push({
+            data: data,
+            name: table.columns[i]
+        }); 
+    }
+    return series;
+};
+
+BarChart.prototype.renderChart = function() {  
     var chart = new Highcharts.Chart({
         chart: {
             renderTo: 'container',
             type: 'column'
         },
         title: {
-            text: (this.numSeries == 1) ? this.titles[0] : ''
+            text: (Object.keys(this.entries).length == 1) ? this.getTitle() : ''
         },
         xAxis: {
             categories: this.getCategories()
         },
         legend: {
-            enabled: this.numSeries > 1,
+            enabled: (Object.keys(this.entries).length > 1) ? true : false,
             labelFormatter: function() {
                 var words = this.name.split(/[\s]+/);
                 var numWordsPerLine = 10;
@@ -68,28 +154,4 @@ BarChart.prototype.renderFromResponse = function(opts) {
         },
         series: this.getSeries()
     });
-}
-
-BarChart.prototype.getCategories = function() {
-    var keys = [];
-    for(k in this.data) {
-        keys.push(k);
-    }
-    return keys;
-};
-
-BarChart.prototype.getSeries = function() {
-    var series = [];
-    for(var i=0; i < this.data[k].length; i++) {
-        var data = [];
-        for(k in this.data) {
-            data.push(this.data[k][i]);
-        }
-        
-        series.push({
-            data: data,
-            name:this.titles[i]
-        }); 
-    }
-    return series;
 };

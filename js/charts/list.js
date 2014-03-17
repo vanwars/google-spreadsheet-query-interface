@@ -1,15 +1,14 @@
-var List = function(){ };
+var List = function(){
+    this.type = 'list';
+    this.title = null;
+    this.data = [];
+    this.callback = 'visPage.list.processResponse';
+};
 
-List.prototype.renderFromResponse = function(opts) {
-    var response = opts.response;
-    var title = response.table.cols[0].label;
-    var data = [];
-    $.each(response.table.rows, function(){
-        data.push([
-            this.c[0].v.toString(), this.c[1].v]
-        );
-    });
-    
+List.prototype = new Chart();
+
+
+List.prototype.renderChart = function(opts) {
     var $table = $('<table></table>')
                     .addClass("table table-striped table-bordered")
                     .css({
@@ -20,10 +19,10 @@ List.prototype.renderFromResponse = function(opts) {
     $table.append($head).append($body);
     $head.append(
             $('<tr></tr>')
-                .append($('<th></th>').html(title))
+                .append($('<th></th>').html(this.title))
                 .append($('<th>Count</th>'))
     );
-    $.each(data, function(){
+    $.each(this.data, function(){
         $tr = $('<tr></tr>');
         $tr.append($('<td></td>').html(this[0]));  
         $tr.append($('<th></th>').html(this[1]));  
