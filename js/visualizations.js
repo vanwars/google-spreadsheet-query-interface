@@ -1,16 +1,21 @@
 var VisualizationPage = function(){
+    this.dataManager = new DataManager({
+        'spreadsheetKey': '0AmrOktWHu7PWdF9vVEtpMkdyWFg0ZHItYm9aZU4wSVE'    
+    });
+    var chartOpts = {
+        dataManager: this.dataManager 
+    };
     this.charts = {};
-    this.barChart = new BarChart();  
-    this.pieChart = new PieChart();  
-    this.list = new List();    
-    this.tagCloud = new TagCloud();  
-    this.scatterPlot = new ScatterPlot();
-    this.dataManager = new DataManager();
+    this.barChart = new BarChart(chartOpts);  
+    this.pieChart = new PieChart(chartOpts);  
+    this.list = new List(chartOpts);    
+    this.tagCloud = new TagCloud(chartOpts);  
+    this.scatterPlot = new ScatterPlot(chartOpts);
+    
     this.makeLookup();
 };
 
 VisualizationPage.prototype.init = function() {
-    //querySpreadsheet({}, 'visPage.renderMenu');
     this.dataManager.init();
 };
 
@@ -25,41 +30,3 @@ VisualizationPage.prototype.makeLookup = function() {
 VisualizationPage.prototype.getActiveChart = function(){
     return this.charts[$('#chartType').val()];
 }
-
-VisualizationPage.prototype.deprecated = function(){
-    switch($('#chartType').val()){
-        case 'barChart':
-            //if more than one item is selected, then the chart type is additive
-            var clear = $('#menu').find('a.active').size() == 1;
-            this.barChart.renderFromResponse({
-                response: response,
-                clear: clear
-            });
-            break;
-        case 'pieChart':
-            this.pieChart.renderFromResponse({
-                response: response
-            })
-            break;
-        case 'list':
-            this.list.renderFromResponse({
-                response: response
-            })
-            break;
-        case 'tagCloud':
-            this.tagCloud.renderFromResponse({
-                response: response
-            })
-            break;
-        case 'scatter':
-            this.scatterPlot.renderFromResponse({
-                response: response
-            })
-            break;
-    }
-}
-
-
-
-
-

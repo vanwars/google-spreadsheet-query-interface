@@ -1,8 +1,9 @@
-var PieChart = function(){
+var PieChart = function(opts){
     this.type = 'pieChart';
     this.title = null;
     this.data = [];
     this.callback = 'visPage.pieChart.processResponse';
+    $.extend(this, opts);
 };
 
 PieChart.prototype = new Chart();

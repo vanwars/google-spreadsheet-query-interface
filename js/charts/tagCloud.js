@@ -1,5 +1,5 @@
 var fill = d3.scale.category20();
-var TagCloud = function(){
+var TagCloud = function(opts){
     this.type = 'tagCloud';
     this.title = null;
     this.words = [];

@@ -1,28 +1,23 @@
-Chart = function(){
-    this.spreadsheetKey = '0AmrOktWHu7PWdGJaMTN5QkF5UTJTZFExamVmWXVQM2c';
-    this.callback = 'callback';
+Chart = function(opts){
+    this.dataManager = null;
+    this.callback = null;
+    this.title = 'Untitled';
+    this.data = [];
+    $.extend(this, opts);
 };
 
-Chart.prototype.querySpreadsheet = function(sql) {
-    //https://developers.google.com/chart/interactive/docs/dev/implementing_data_source?csw=1#requestformat
-    var params = {
-        key: this.spreadsheetKey,
-        pub: 1,
-        tqx: 'responseHandler:' + this.callback,
-        tq: sql
-    };
-    $.ajax({
-        url: "http://spreadsheets.google.com/tq",
-        dataType: "jsonp",
-        data: params
-    });
+Chart.prototype.querySpreadsheet = function(opts) {
+    this.dataManager.querySpreadsheet(opts);
 };
 
 Chart.prototype.renderVis = function(e, column){
     $('#menu a').removeClass("active");
         column.htmlEntry.addClass("active");
     
-    this.querySpreadsheet(column.getSQL());
+    this.querySpreadsheet({
+        sql: column.getSQL(),
+        callback: this.callback
+    });
 };
 
 Chart.prototype.processResponse = function(response) {

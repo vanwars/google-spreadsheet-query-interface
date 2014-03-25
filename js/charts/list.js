@@ -1,8 +1,9 @@
-var List = function(){
+var List = function(opts){
     this.type = 'list';
     this.title = null;
     this.data = [];
     this.callback = 'visPage.list.processResponse';
+    $.extend(this, opts);
 };
 
 List.prototype = new Chart();
@@ -30,7 +31,6 @@ List.prototype.renderChart = function(opts) {
     })
 
     $('#container').empty().append($table);
-    
-    
+
 }
 

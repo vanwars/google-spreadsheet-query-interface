@@ -1,6 +1,7 @@
 var DataManager = function(opts){
-    this.spreadsheetKey = '0AmrOktWHu7PWdGJaMTN5QkF5UTJTZFExamVmWXVQM2c';
+    this.spreadsheetKey;
     this.columns = {};
+    $.extend(this, opts);
 };
 
 DataManager.prototype.init = function(opts) {
@@ -17,7 +18,8 @@ DataManager.prototype.querySpreadsheet = function(opts) {
     var params = {
         key: this.spreadsheetKey,
         tqx: 'responseHandler:' + callback,
-        tq: sql
+        tq: sql,
+        gid: 5
     };
     $.ajax({
         url: "http://spreadsheets.google.com/tq",
@@ -63,7 +65,6 @@ DataManager.prototype.getActiveColumns = function(response){
             activeColumns.push(this);
     });
     return activeColumns;
-
 };
 
 

@@ -1,4 +1,4 @@
-var ScatterPlot = function(){
+var ScatterPlot = function(opts){
     this.dataset = [];   
 };
 

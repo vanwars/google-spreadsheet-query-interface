@@ -1,8 +1,9 @@
-var BarChart = function(){
+var BarChart = function(opts){
     this.type = 'barChart';
     this.activeEntryID = -1;
-    this.entries = {};
     this.callback = 'visPage.barChart.processResponse';
+    this.entries = {};
+    $.extend(this, opts);
 };
 
 BarChart.prototype = new Chart();
@@ -34,7 +35,10 @@ BarChart.prototype.addSeries = function(column) {
         data: null
     };
     this.activeEntryID = column.id;
-    this.querySpreadsheet(column.getSQL());
+    this.querySpreadsheet({
+        sql: column.getSQL(),
+        callback: this.callback
+    });
 };
 
 BarChart.prototype.removeSeries = function(column) {
