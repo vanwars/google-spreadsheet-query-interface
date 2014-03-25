@@ -2,7 +2,7 @@ var PieChart = function(opts){
     this.type = 'pieChart';
     this.title = null;
     this.data = [];
-    this.callback = 'visPage.pieChart.processResponse';
+    this.callback = 'visPage.charts.pieChart.processResponse';
     $.extend(this, opts);
 };
 

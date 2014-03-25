@@ -2,7 +2,7 @@ var List = function(opts){
     this.type = 'list';
     this.title = null;
     this.data = [];
-    this.callback = 'visPage.list.processResponse';
+    this.callback = 'visPage.charts.list.processResponse';
     $.extend(this, opts);
 };
 

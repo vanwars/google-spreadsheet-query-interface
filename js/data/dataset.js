@@ -1,11 +1,13 @@
 var DataManager = function(opts){
     this.spreadsheetKey;
+    this.sheetID;
     this.columns = {};
     $.extend(this, opts);
 };
 
 DataManager.prototype.init = function(opts) {
     //populate columns:
+    this.columns = {};
     this.querySpreadsheet({
         callback: 'visPage.dataManager.processResponse'   
     });
@@ -19,7 +21,7 @@ DataManager.prototype.querySpreadsheet = function(opts) {
         key: this.spreadsheetKey,
         tqx: 'responseHandler:' + callback,
         tq: sql,
-        gid: 5
+        gid: this.sheetID
     };
     $.ajax({
         url: "http://spreadsheets.google.com/tq",
@@ -49,6 +51,7 @@ DataManager.prototype.renderMenu = function() {
         if (activeColumns.length > 0)
             visPage.getActiveChart().renderVis(e, activeColumns[0]);
     });
+    $('#menu').empty();
     $.each(this.columns, function(){
         $('#menu').append(this.renderEntry({
             callback: visPage.doQuery

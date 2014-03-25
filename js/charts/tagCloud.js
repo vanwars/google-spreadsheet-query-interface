@@ -3,7 +3,8 @@ var TagCloud = function(opts){
     this.type = 'tagCloud';
     this.title = null;
     this.words = [];
-    this.callback = 'visPage.tagCloud.processResponse';
+    this.callback = 'visPage.charts.tagCloud.processResponse';
+    $.extend(this, opts);
 };
 
 TagCloud.prototype = new Chart();

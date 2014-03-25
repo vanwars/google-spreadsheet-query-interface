@@ -1,14 +1,14 @@
-var BarChart = function(opts){
-    this.type = 'barChart';
+var Histogram = function(opts){
+    this.type = 'histogram';
     this.activeEntryID = -1;
-    this.callback = 'visPage.barChart.processResponse';
+    this.callback = 'visPage.charts.histogram.processResponse';
     this.entries = {};
     $.extend(this, opts);
 };
 
-BarChart.prototype = new Chart();
+Histogram.prototype = new Chart();
 
-BarChart.prototype.renderVis = function(e, column){
+Histogram.prototype.renderVis = function(e, column){
     if (e.ctrlKey || e.metaKey) {
         //if the control or option key are down:
         if (!column.isActive())
@@ -29,7 +29,7 @@ BarChart.prototype.renderVis = function(e, column){
         visPage.getActiveChart().removeSeries(column);  
 };
 
-BarChart.prototype.addSeries = function(column) {
+Histogram.prototype.addSeries = function(column) {
     this.entries[column.id] = {
         column: column,
         data: null
@@ -41,25 +41,25 @@ BarChart.prototype.addSeries = function(column) {
     });
 };
 
-BarChart.prototype.removeSeries = function(column) {
+Histogram.prototype.removeSeries = function(column) {
     this.entries[column.id] = null;
     delete this.entries[column.id];
     this.renderChart();
 };
 
-BarChart.prototype.getTitle = function(column) {
+Histogram.prototype.getTitle = function(column) {
     for(k in this.entries) {
         return this.entries[k].column.name;
     }
     return ''
 };
 
-BarChart.prototype.processResponse = function(response) {
+Histogram.prototype.processResponse = function(response) {
     this.addEntry(response);
     this.renderChart();
 };
 
-BarChart.prototype.addEntry = function(response) {
+Histogram.prototype.addEntry = function(response) {
     var data = {};
     $.each(response.table.rows, function(){
         data[this.c[0].v] = this.c[1].v;  
@@ -67,7 +67,7 @@ BarChart.prototype.addEntry = function(response) {
     this.entries[this.activeEntryID].data = data;
 };
 
-BarChart.prototype.getTable = function(){
+Histogram.prototype.getTable = function(){
     //convert the column entries into a flat data table:
     var table = {
         columns: [],
@@ -96,7 +96,7 @@ BarChart.prototype.getTable = function(){
 };
 
 
-BarChart.prototype.getCategories = function() {
+Histogram.prototype.getCategories = function() {
     var keys = [];
     for(k in this.getTable().data) {
         keys.push(k);
@@ -104,7 +104,7 @@ BarChart.prototype.getCategories = function() {
     return keys;
 };
 
-BarChart.prototype.getSeries = function() {
+Histogram.prototype.getSeries = function() {
     var table = this.getTable();
     var series = [];
     for(var i=0; i < Object.keys(this.entries).length; i++) {
@@ -120,7 +120,7 @@ BarChart.prototype.getSeries = function() {
     return series;
 };
 
-BarChart.prototype.renderChart = function() {  
+Histogram.prototype.renderChart = function() {  
     var chart = new Highcharts.Chart({
         chart: {
             renderTo: 'container',
@@ -131,6 +131,12 @@ BarChart.prototype.renderChart = function() {
         },
         xAxis: {
             categories: this.getCategories()
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Counts'
+            }
         },
         legend: {
             enabled: (Object.keys(this.entries).length > 1) ? true : false,
