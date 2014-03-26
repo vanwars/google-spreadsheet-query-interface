@@ -25,7 +25,8 @@ VisualizationPage.prototype.init = function(){
         pieChart: new PieChart(chartOpts),
         list: new List(chartOpts),
         tagCloud: new TagCloud(chartOpts),
-        scatterPlot: new ScatterPlot(chartOpts)
+        scatterPlot: new ScatterPlot(chartOpts),
+        barChart: new BarChart(chartOpts)
     };
     this.dataManager.init();
 };
