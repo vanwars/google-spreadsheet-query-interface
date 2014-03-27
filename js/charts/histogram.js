@@ -121,7 +121,7 @@ Histogram.prototype.getSeries = function() {
 };
 
 Histogram.prototype.renderChart = function() {  
-    var chart = new Highcharts.Chart({
+    this.chart = new Highcharts.Chart({
         chart: {
             renderTo: 'container',
             type: 'column'
@@ -164,4 +164,31 @@ Histogram.prototype.renderChart = function() {
         },
         series: this.getSeries()
     });
+};
+
+Histogram.prototype.getOpts = function(){
+    //get simplest set of options to re-create the chart:
+    return {
+        chart: {
+            renderTo: this.chart.options.chart.renderTo,
+            type: this.chart.options.chart.type
+        },
+        title: this.chart.options.title,
+        xAxis: this.chart.options.xAxis,
+        legend: {
+            enabled: this.chart.options.legend.enabled,
+            labelFormatter: this.chart.options.legend.labelFormatter
+        },
+        credits: {
+            enabled: false
+        },
+        plotOptions: {
+            column: {
+                groupPadding: this.chart.options.plotOptions.column.groupPadding,
+                pointPadding: this.chart.options.plotOptions.column.pointPadding,
+                borderWidth: this.chart.options.plotOptions.column.borderWidth
+            }
+        },
+        series: this.chart.options.series
+    };
 };

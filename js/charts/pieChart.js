@@ -9,7 +9,7 @@ var PieChart = function(opts){
 PieChart.prototype = new Chart();
 
 PieChart.prototype.renderChart = function() {
-    var chart = new Highcharts.Chart({
+    this.chart = new Highcharts.Chart({
         chart: {
             renderTo: 'container',
             type: 'pie'
@@ -26,5 +26,20 @@ PieChart.prototype.renderChart = function() {
             }
         ]
     });
-}
+};
+
+PieChart.prototype.getOpts = function(){
+    //get simplest set of options to re-create the chart:
+    return {
+        chart: {
+            renderTo: this.chart.options.chart.renderTo,
+            type: this.chart.options.chart.type
+        },
+        title: this.chart.options.title,
+        credits: {
+            enabled: false
+        },
+        series: this.chart.options.series
+    };
+};
 

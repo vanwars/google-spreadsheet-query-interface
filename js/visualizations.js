@@ -10,6 +10,7 @@ var VisualizationPage = function(){
 };
 
 VisualizationPage.prototype.init = function(){
+    var me = this;
     this.dataManager = new DataManager({
         'spreadsheetKey': $('#spreadsheetKey').val(),
         'sheetID': ($('#sheetID').val().length > 0) ? $('#sheetID').val() : 1
@@ -29,6 +30,9 @@ VisualizationPage.prototype.init = function(){
         barChart: new BarChart(chartOpts)
     };
     this.dataManager.init();
+    $('#get-code').click(function(){
+        me.getActiveChart().showSourceCode();   
+    });
 };
 
 VisualizationPage.prototype.restoreCookies = function(){

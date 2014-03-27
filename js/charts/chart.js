@@ -1,6 +1,7 @@
 Chart = function(opts){
     this.dataManager = null;
     this.callback = null;
+    this.chart = null;
     this.title = 'Untitled';
     this.data = [];
     $.extend(this, opts);
@@ -35,3 +36,43 @@ Chart.prototype.processResponse = function(response) {
 Chart.prototype.renderChart = function() {
     alert("Please override the renderChart method.")
 }
+
+Chart.prototype.getOpts = function(){
+    //get simplest set of options to re-create the chart:
+    return {
+        chart: this.chart.options.chart,
+        title: this.chart.options.title,
+        xAxis: this.chart.options.xAxis,
+        legend: this.chart.options.legend,
+        credits: {
+            enabled: false
+        },
+        plotOptions: {
+            column: this.chart.options.plotOptions.column
+        },
+        series: this.chart.options.series
+    };
+};
+
+Chart.prototype.showSourceCode = function(){
+    //show options:
+    var opts = this.getOpts();
+    var src = ''
+    src += '<html>\n';
+    src += '  <head>\n';
+    src += '    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js" type="text/javascript"></script>\n';
+    src += '    <script src="http://code.highcharts.com/highcharts.js"></script>\n';
+    src += '    <script src="http://code.highcharts.com/modules/exporting.js"></script>\n';
+    src += '    <script>\n';
+    src += '       function loadChart(){\n';
+    src += '           var chart = new Highcharts.Chart(' + JSON.stringify(opts, undefined, 3) + ');\n';
+    src += '       }\n';
+    src += '    </script>\n';
+    src += '  </head>\n';
+    src += '  <body onload="loadChart();">\n';
+    src += '    <div id="container" style="min-width: 310px; height: 300px; margin: 50 auto"></div>\n'
+    src += '  </body>\n';
+    src += '</html>\n';
+    $('#src').val(src);
+    $('#myModal').modal('show');  
+};

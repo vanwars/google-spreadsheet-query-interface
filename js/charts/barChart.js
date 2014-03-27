@@ -3,6 +3,7 @@ var BarChart = function(opts){
     this.callback = 'visPage.charts.barChart.processResponse';
     this.entries = {};
     this.data = [];
+    this.chart = null;
     $.extend(this, opts);
 };
 
@@ -66,7 +67,7 @@ BarChart.prototype.processResponse = function(response) {
 
 
 BarChart.prototype.renderChart = function() {  
-    var chart = new Highcharts.Chart({
+    this.chart = new Highcharts.Chart({
         chart: {
             renderTo: 'container',
             type: 'column'
@@ -103,18 +104,4 @@ BarChart.prototype.renderChart = function() {
         },
         series: this.getSeries()
     });
-    
-    //show options:
-    var opts = {
-        chart: chart.options.chart,
-        title: chart.options.title,
-        xAxis: chart.options.xAxis,
-        legend: chart.options.legend,
-        plotOptions: {
-            column: chart.options.plotOptions.column
-        },
-        series: chart.options.series
-        
-    }
-    alert(JSON.stringify(opts));
 };
